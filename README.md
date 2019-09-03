@@ -1,6 +1,6 @@
-# easyui_vue
+# vue-web-framework
 
-> A Vue.js project
+> Vue Web Framework With EasyUI
 
 ## Build Setup
 
