@@ -3,10 +3,12 @@
 import 'vx-easyui/dist/themes/bootstrap/easyui.css'
 import 'vx-easyui/dist/themes/icon.css'
 import 'vx-easyui/dist/themes/vue.css'
+import './theme/css/iconfont.css'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
 import EasyUI from 'vx-easyui'
+import './components/directives/'
 
 Vue.use(EasyUI)
 Vue.config.productionTip = false
