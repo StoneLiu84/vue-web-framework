@@ -11,8 +11,8 @@ Vue.directive('scrollbar', {
     el.ps = new PerfectScrollbar(el, {})
   },
   componentUpdated (el) {
-    if (el.ps) {
+    /* if (el.ps) {
       el.ps.update()
-    }
+    } */
   }
 })

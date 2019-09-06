@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-menu-item">
+  <div class="nav-menu-item" :class="{'collapse': collapse}">
     <div class="menu-node" @click="onExtend" :class="{'active': selectedId === componentValue.id, 'top': level === 1}">
       <span v-if="level === 1" class="icon" :class="iconCls"></span>
       <span v-else class="blank" v-for="i in level" :key="i"></span>
@@ -33,6 +33,10 @@ export default {
     data: {
       type: Object,
       default: () => {}
+    },
+    collapse: {
+      type: Boolean,
+      default: false
     },
     extend: {
       type: Boolean,
@@ -181,6 +185,13 @@ export default {
       bottom: 0px;
       width: 100%;
       height: 1px;
+    }
+  }
+  &.collapse {
+    .menu-node:not(.top),
+    .arrow,
+    .menu-children {
+      display: none;
     }
   }
 }

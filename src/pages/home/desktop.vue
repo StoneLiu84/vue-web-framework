@@ -1,10 +1,10 @@
 <template>
   <div class="desktop">
     <SysHeader ref="header"></SysHeader>
-    <div class="body" :style="{height: height + 'px'}">
+    <div class="body" :style="{height: height + 'px'}" :class="{'max': this.isMenuCollapse}">
       <router-view/>
     </div>
-    <NavMenu ref="menu" :height="height"></NavMenu>
+    <NavMenu ref="menu" :height="height" @collapse="onMenuCollapse"></NavMenu>
     <SysFooter ref="footer"></SysFooter>
   </div>
 </template>
@@ -22,7 +22,8 @@ export default {
   },
   data () {
     return {
-      height: 300
+      height: 300,
+      isMenuCollapse: false
     }
   },
   mounted () {
@@ -35,6 +36,9 @@ export default {
       let headerHeight = this.$refs.header.$el.offsetHeight
       let footerHeight = this.$refs.footer.$el.offsetHeight
       this.height = windowHeight - headerHeight - footerHeight
+    },
+    onMenuCollapse (value) {
+      this.isMenuCollapse = value
     }
   },
   beforeDestroy () {
@@ -44,11 +48,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../theme/css/base.less';
 .desktop {
   .body {
-    padding-left: 220px;
+    padding-left: @menu-width;
     position: relative;
     box-sizing: border-box;
+    transition: padding-left 0.5s;
+    &.max {
+      padding-left: @menu-collapse-width;
+    }
   }
 }
 </style>

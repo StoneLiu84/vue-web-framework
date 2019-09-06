@@ -1,10 +1,16 @@
 <template>
-  <div class="nav-menu" :style="{height: height + 'px'}">
-    <div class="body" v-scrollbar :style="{height: (height - 40) + 'px'}">
+  <div
+    class="nav-menu"
+    :style="{height: height + 'px'}"
+    :class="{'collapse': collapse && !hover}"
+    @mouseover="onMouseOver"
+    @mouseout="onMouseOut">
+    <div class="body" v-scrollbar :style="{height: bodyHeight + 'px'}">
       <NavMenuItem
         v-for="item in dataList"
         :data="item"
         :key="item.id"
+        :collapse="collapse && !hover"
         :extend="item.id === extendId"
         :selected-id="selectedId"
         :level="1"
@@ -13,8 +19,8 @@
       </NavMenuItem>
     </div>
     <div class="query">
-      <input type="text" placeholder="输入关键字搜索"/>
-      <span class="iconfont icon-icon_left"></span>
+      <input type="text" placeholder="输入关键字搜索" :value="keyword"/>
+      <span class="iconfont" :class="collapseClass" @click="onCollapse"></span>
     </div>
   </div>
 </template>
@@ -37,7 +43,11 @@ export default {
     return {
       extendId: '',
       selectedId: '',
-      dataList: Menu
+      dataList: Menu,
+      collapse: false,
+      collapsing: false,
+      hover: false,
+      keyword: ''
     }
   },
   methods: {
@@ -46,22 +56,51 @@ export default {
     },
     onSelectNode (id) {
       this.selectedId = id
+    },
+    onCollapse () {
+      this.collapse = !this.collapse
+      this.collapsing = true
+      this.hover = false
+      this.$emit('collapse', this.collapse)
+      setTimeout(() => {
+        this.collapsing = false
+      }, 500)
+    },
+    onMouseOver () {
+      this.hover = this.collapse && !this.collapsing
+    },
+    onMouseOut () {
+      this.hover = false
+    }
+  },
+  computed: {
+    collapseClass () {
+      return {
+        'icon-icon_ding': this.collapse && this.hover,
+        'extend': this.collapse && !this.hover,
+        'icon-icon_left': !this.collapse || (this.collapse && !this.hover)
+      }
+    },
+    bodyHeight () {
+      return this.height - 40
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@import '../../theme/css/base.less';
 .nav-menu {
   position: absolute;
   left: 0px;
   top: 50px;
-  width: 220px;
+  width: @menu-width;
   box-sizing: border-box;
   background-color: #262932;
   border-right: 1px solid #181c28;
   color: #c9d4f6;
   font-size: 12px;
+  transition: width 0.5s;
   .body {
     position: relative;
   }
@@ -89,7 +128,7 @@ export default {
       padding: 0px;
       height: 26px;
       border: 0px;
-      font-size: 14px;
+      font-size: 12px;
       background-color: #333;
       color: #fff;
       float: left;
@@ -101,6 +140,23 @@ export default {
       box-shadow: 1px 1px 0 rgba(255,255,255,0.1) inset;
       border: 1px solid rgba(0,0,0,0.25);
       border-radius: 2px;
+    }
+  }
+  &.collapse {
+    width: @menu-collapse-width;
+    box-sizing: border-box;
+    overflow: hidden;
+    .query {
+      input {
+        display: none;
+      }
+      span {
+        margin-left: 7.5px;
+        transition: transform 0.5s;
+        &.extend {
+          transform: rotate(180deg);
+        }
+      }
     }
   }
 }
