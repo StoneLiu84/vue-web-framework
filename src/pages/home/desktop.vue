@@ -1,8 +1,13 @@
 <template>
   <div class="desktop">
     <SysHeader ref="header"></SysHeader>
-    <div class="body" :style="{height: height + 'px'}" :class="{'max': this.isMenuCollapse}">
-      <router-view/>
+    <div class="body" :style="{height: height + 'px'}" :class="{'max': this.isMenuCollapse}" v-scrollbar>
+      <transition name="fade">
+        <div class="page-loading" :style="{'width': loadingPrecent + '%'}" v-show="loadingVisible"></div>
+      </transition>
+      <transition name="fade">
+        <router-view class="router-view"/>
+      </transition>
     </div>
     <NavMenu ref="menu" :height="height" @collapse="onMenuCollapse"></NavMenu>
     <SysFooter ref="footer"></SysFooter>
@@ -23,7 +28,9 @@ export default {
   data () {
     return {
       height: 300,
-      isMenuCollapse: false
+      isMenuCollapse: false,
+      loadingVisible: false,
+      loadingPrecent: 30
     }
   },
   mounted () {
@@ -41,6 +48,33 @@ export default {
       this.isMenuCollapse = value
     }
   },
+  computed: {
+    pageLoading () {
+      return this.$store.getters.loading
+    }
+  },
+  watch: {
+    pageLoading (newValue) {
+      if (newValue) {
+        this.loadingPrecent = 0
+        this.loadingVisible = true
+        this.$nextTick(() => {
+          this.timeObject = setInterval(() => {
+            if (this.loadingPrecent < 70) {
+              this.loadingPrecent += 10
+            } else {
+              clearInterval(this.timeObject)
+            }
+          }, 80)
+        })
+      } else {
+        this.loadingPrecent = 100
+        setTimeout(() => {
+          this.loadingVisible = false
+        }, 300)
+      }
+    }
+  },
   beforeDestroy () {
     window.removeEventListener('resize', this.init)
   }
@@ -51,13 +85,39 @@ export default {
 @import '../../theme/css/base.less';
 .desktop {
   .body {
-    padding-left: @menu-width;
+    margin-left: @menu-width;
     position: relative;
     box-sizing: border-box;
-    transition: padding-left 0.5s;
+    transition: margin-left 0.5s;
+    overflow: hidden;
     &.max {
-      padding-left: @menu-collapse-width;
+      margin-left: @menu-collapse-width;
+    }
+    .page-loading {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      height: 3px;
+      width: 0px;
+      background-color: #5cb85c;
+      transition: 0.1s;
     }
   }
+}
+.router-view {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: opacity 0.5s;
+}
+/* .fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s;
+} */
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

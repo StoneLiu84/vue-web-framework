@@ -15,8 +15,8 @@ router.beforeEach((to, from, next) => {
   if (to.matched.length === 0) { // 路由找不到页面
     next('/404')
   } else {
-    /* store.commit('pageLoading', true)
-    if (String.isNullOrEmpty(store.getters.userInfo.UserID)) {
+    store.commit('loading', true)
+    /* if (String.isNullOrEmpty(store.getters.userInfo.UserID)) {
       store.dispatch('userInfo/checkLogin', {
         callback (result) {
           if (!result.authentication && !isRouteValidate(to)) {
@@ -34,7 +34,9 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  store.commit('loading', false)
+  setTimeout(() => {
+    store.commit('loading', false)
+  }, 500)
 })
 
 router.onError(() => {

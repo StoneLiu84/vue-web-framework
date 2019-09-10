@@ -58,7 +58,9 @@ export default {
     return {
       componentValue: null,
       childrenHeight: 0,
-      extendChildrenId: ''
+      extendChildrenId: '',
+      index: 0,
+      menu: ['/error', '/404']
     }
   },
   created () {
@@ -71,6 +73,8 @@ export default {
         this.$emit('node-click', this.componentValue.id)
       } else {
         this.$emit('select-node', this.componentValue.id)
+        this.$router.push({ path: this.menu[this.index] })
+        this.index = this.index === 0 ? 1 : 0
       }
     },
     onNodeClick (id) {

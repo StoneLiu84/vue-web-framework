@@ -14,6 +14,7 @@ export default new Vuex.Store({
   },
   getters: {
     token: state => state.token,
+    loading: state => state.loading,
     userInfo: state => state.userInfo.data,
     right: state => state.right.rightData,
     dataDictionary: state => state.dataDictionary.data

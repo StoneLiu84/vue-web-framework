@@ -17,9 +17,19 @@
         @node-click="onNodeClick"
         @select-node="onSelectNode">
       </NavMenuItem>
+      <div
+        class="query-list"
+        v-scrollbar
+        :style="{height: bodyHeight + 'px'}"
+        v-show="queryVisible && !this.collapse"
+        v-loading="loading"
+        loading-text="正在加载"
+        loading-background="transparent">
+        <div class="query-list-item" v-for="item in queryList" :key="item.id">{{item.text}}</div>
+      </div>
     </div>
     <div class="query">
-      <input type="text" placeholder="输入关键字搜索" :value="keyword"/>
+      <input type="text" placeholder="输入关键字搜索" v-model="keyword" @keydown="onInput"/>
       <span class="iconfont" :class="collapseClass" @click="onCollapse"></span>
     </div>
   </div>
@@ -47,7 +57,10 @@ export default {
       collapse: false,
       collapsing: false,
       hover: false,
-      keyword: ''
+      keyword: '',
+      queryVisible: false,
+      queryList: [],
+      loading: false
     }
   },
   methods: {
@@ -71,6 +84,24 @@ export default {
     },
     onMouseOut () {
       this.hover = false
+    },
+    onInput (e) {
+      if (e.keyCode === 13) {
+        if (this.keyword) {
+          this.queryVisible = true
+          this.loading = true
+          setTimeout(() => { // 模拟异步加载
+            this.queryList = [
+              { id: '1', text: '系统管理' },
+              { id: '2', text: '系统菜单' }
+            ]
+            this.loading = false
+          }, 2000)
+        } else {
+          this.queryVisible = false
+          this.queryList = []
+        }
+      }
     }
   },
   computed: {
@@ -103,6 +134,27 @@ export default {
   transition: width 0.5s;
   .body {
     position: relative;
+    .query-list {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      box-sizing: border-box;
+      display: block;
+      background-color: #262932;
+      .query-list-item {
+        height: 36px;
+        line-height: 34px;
+        border-top: 1px solid #32353e;
+        border-bottom: 1px solid #1a1c20;
+        padding-left: 20px;
+        box-sizing: border-box;
+        cursor: pointer;
+        &:hover {
+          background-color: #292c35;
+        }
+      }
+    }
   }
   .query {
     height: 40px;
