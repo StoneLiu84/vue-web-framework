@@ -17,7 +17,7 @@ footer {
   color: #848484;
   line-height: 30px;
   text-align: center;
-  background-color: @footer-background-color;
+  background-color: @footer-background;
   position: relative;
   border-top: 1px solid #d4d4d4;
   font-size: 12px;

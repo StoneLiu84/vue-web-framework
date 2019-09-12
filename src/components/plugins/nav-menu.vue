@@ -107,9 +107,9 @@ export default {
   computed: {
     collapseClass () {
       return {
-        'icon-icon_ding': this.collapse && this.hover,
+        'icon-ping': this.collapse && this.hover,
         'extend': this.collapse && !this.hover,
-        'icon-icon_left': !this.collapse || (this.collapse && !this.hover)
+        'icon-left': !this.collapse || (this.collapse && !this.hover)
       }
     },
     bodyHeight () {

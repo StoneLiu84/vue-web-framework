@@ -2,15 +2,15 @@
   <header>
     <div class="logo">Vue Web Framework</div>
     <div class="user" @click="onUserClick">
-      <div class="avatar"><i class="iconfont icon-icon_signal_fill"></i></div>
+      <div class="avatar"><i class="iconfont icon-signal_fill"></i></div>
       <div class="name">
         <div class="main">张三</div>
         <div class="sub">zhangsan</div>
       </div>
-      <i class="arrow iconfont icon-icon_down" :class="menuVisible ? 'extend' : ''"></i>
+      <i class="arrow iconfont icon-down" :class="menuVisible ? 'extend' : ''"></i>
       <div class="menu-list" :style="{'height': (menuVisible ? 70 : 0) + 'px'}">
         <div class="menu-list-item" @click.stop="onMenuClick"><i class="iconfont icon-icon_signal"></i>个人信息</div>
-        <div class="menu-list-item" @click.stop="onMenuClick"><i class="iconfont icon-icon_sport"></i> 注销</div>
+        <div class="menu-list-item" @click.stop="onMenuClick"><i class="iconfont icon-logout"></i> 注销</div>
       </div>
     </div>
   </header>
@@ -36,7 +36,7 @@ export default {
 <style lang="less" scoped>
 @import '../../theme/css/base.less';
 header {
-  background-color: @header-background-color;
+  background-color: @header-background;
   height: 50px;
   color: #ffffff;
   z-index: 2;

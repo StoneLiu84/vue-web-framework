@@ -4,7 +4,7 @@
       <span v-if="level === 1" class="icon" :class="iconCls"></span>
       <span v-else class="blank" v-for="i in level" :key="i"></span>
       <span class="text">{{componentValue.text}}</span>
-      <span class="arrow iconfont icon-icon_left" :class="{'extend': extend}" v-if="hasChildren"></span>
+      <span class="arrow iconfont icon-left" :class="{'extend': extend}" v-if="hasChildren"></span>
     </div>
     <div class="menu-children" :style="{'height': (extend ? childrenHeight : 0) + 'px'}" v-if="hasChildren">
       <NavMenuItem
@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     iconCls () {
-      return this.componentValue.iconCls || 'iconfont icon-icon_threeline_fill'
+      return this.componentValue.iconCls || 'iconfont icon-threeline_fill'
     },
     hasChildren () {
       return this.componentValue.children && this.componentValue.children.length
