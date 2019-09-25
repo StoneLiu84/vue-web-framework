@@ -107,7 +107,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .nav-menu-item {
   .menu-node {
     height: 34px;

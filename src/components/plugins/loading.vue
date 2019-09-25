@@ -37,7 +37,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @keyframes loading-rotate {
   to {
     transform: rotate(1turn);

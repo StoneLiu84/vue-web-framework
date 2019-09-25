@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'Header',
+  name: 'SysHeader',
   data () {
     return {
       menuVisible: false
@@ -33,7 +33,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '../../theme/css/base.less';
 header {
   background-color: @header-background;

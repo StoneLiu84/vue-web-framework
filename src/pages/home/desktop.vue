@@ -15,16 +15,9 @@
 </template>
 
 <script>
-import SysHeader from '@/components/plugins/sys-header'
-import SysFooter from '@/components/plugins/sys-footer'
-import NavMenu from '@/components/plugins/nav-menu'
 export default {
   name: 'Desktop',
-  components: {
-    SysHeader,
-    SysFooter,
-    NavMenu
-  },
+  componentName: 'Desktop',
   data () {
     return {
       height: 300,
@@ -75,7 +68,7 @@ export default {
       }
     }
   },
-  beforeDestroy () {
+  destroy () {
     window.removeEventListener('resize', this.init)
   }
 }

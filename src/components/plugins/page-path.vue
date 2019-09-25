@@ -1,6 +1,6 @@
 <template>
   <div class="page-path">
-    <i class="iconfont icon-icon_signin"></i>
+    <i class="iconfont icon-signin"></i>
     <span>系统管理</span>
     <span>系统配置</span>
     <span>系统信息</span>
@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style lang="less" scope>
+<style lang="less">
 .page-path {
   height: 40px;
   border-bottom: 1px solid #e8e8e8;

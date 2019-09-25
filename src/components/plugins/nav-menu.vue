@@ -39,7 +39,7 @@
 import NavMenuItem from './nav-menu-item'
 import Menu from '../../scripts/menu'
 export default {
-  name: 'Menu',
+  name: 'NavMenu',
   components: {
     NavMenuItem
   },
@@ -119,7 +119,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '../../theme/css/base.less';
 .nav-menu {
   position: absolute;

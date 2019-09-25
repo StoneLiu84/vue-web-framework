@@ -90,7 +90,8 @@ const toggleLoading = (el, binding) => {
   }
 } */
 
-Vue.directive('loading', {
+const loading = {
+  name: 'loading',
   bind: function (el, binding, vnode) {
     const textExr = el.getAttribute('loading-text')
     // const spinnerExr = el.getAttribute('loading-spinner')
@@ -113,14 +114,12 @@ Vue.directive('loading', {
 
     binding.value && toggleLoading(el, binding)
   },
-
   update: function (el, binding) {
     el.instance.setText(el.getAttribute('loading-text'))
     if (binding.oldValue !== binding.value) {
       toggleLoading(el, binding)
     }
   },
-
   unbind: function (el, binding) {
     if (el.domInserted) {
       el.mask &&
@@ -130,4 +129,6 @@ Vue.directive('loading', {
     }
     el.instance && el.instance.$destroy()
   }
-})
+}
+
+export default loading

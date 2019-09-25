@@ -1,8 +1,8 @@
-import Vue from 'vue'
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 
-Vue.directive('scrollbar', {
+const scrollbar = {
+  name: 'scrollbar',
   inserted (el) {
     const rules = ['fixed', 'absolute', 'relative']
     if (!rules.includes(window.getComputedStyle(el, null).position)) {
@@ -16,4 +16,6 @@ Vue.directive('scrollbar', {
       el.oldHeight = el.offsetHeight
     }
   }
-})
+}
+
+export default scrollbar

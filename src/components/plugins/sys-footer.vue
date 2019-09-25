@@ -4,11 +4,11 @@
 
 <script>
 export default {
-  name: 'Footer'
+  name: 'SysFooter'
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '../../theme/css/base.less';
 footer {
   height: 31px;
