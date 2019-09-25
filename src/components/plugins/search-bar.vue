@@ -18,16 +18,18 @@
         </LinkButtonEx>
       </div>
     </div>
-    <DialogEx ref="dialog" title="高级查询" :buttons="dialogButtons" :width="600">
-      <p style="text-align:center;margin:20px 0;font-size:16px">The Dialog Content.</p>
-    </DialogEx>
+    <SearchDialog ref="dialog" :options="options" @search="onSearchAdvanced"></SearchDialog>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
+import SearchUtil from '../utils/search-util'
+import SearchDialog from './search-dialog'
 export default {
   name: 'SearchBar',
+  components: {
+    SearchDialog
+  },
   props: {
     options: {}
   },
@@ -36,27 +38,14 @@ export default {
       selectedOption: {},
       fieldData: [],
       componentInstance: null,
-      searchValue: '',
-      dialogButtons: [
-        {
-          text: '确定',
-          iconCls: 'icon-task_done',
-          btnCls: 'btn-primary',
-          handler: this.onSearchAdvanced
-        },
-        'close'
-      ]
+      searchValue: ''
     }
   },
   created () {
     this.initFieldData()
   },
   mounted () {
-    this.createComponent({
-      name: this.selectedOption.component,
-      props: this.selectedOption.props,
-      parent: this.$refs.input
-    })
+    this.createComponent()
   },
   methods: {
     initFieldData () {
@@ -92,40 +81,30 @@ export default {
             break
           }
         }
-        this.createComponent({
-          name: this.selectedOption.component,
-          props: this.selectedOption.props,
-          parent: this.$refs.input
-        })
+        this.createComponent()
       }
     },
     onSearch () {
       this.$emit('search', [
         {
           Field: this.selectedOption.field,
-          FindType: 'LIKE',
+          FindType: 'EQ',
           Value: this.searchValue
         }
       ])
     },
-    onSearchAdvanced () {
-      this.$refs.dialog.close()
+    onSearchAdvanced (params) {
+      this.$emit('search', params)
     },
-    createComponent ({name, props, parent} = {}) {
-      if (!parent) return
-      if (this.componentInstance) {
-        parent.removeChild(this.componentInstance.$el)
-      }
-      const component = Vue.component(name)
-      const Component = Vue.extend(component)
-      this.componentInstance = new Component({
-        el: document.createElement('div'),
-        propsData: props
+    createComponent () {
+      this.componentInstance = SearchUtil.createComponent({
+        componentName: this.selectedOption.component,
+        propsData: this.selectedOption.propsData,
+        parent: this.$refs.input
       })
       this.componentInstance.$on('input', value => {
         this.searchValue = value
       })
-      parent.appendChild(this.componentInstance.$el)
     }
   }
 }

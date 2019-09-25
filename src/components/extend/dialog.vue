@@ -11,7 +11,7 @@
     bodyCls="f-column"
     @open="onOpen"
     @close="onClose">
-    <div class="f-full" ref="body" v-loading="loading" v-scrollbar>
+    <div class="f-full" ref="body" v-loading="loading" v-scrollbar :style="{'height': bodyHeight + 'px'}">
       <slot></slot>
     </div>
     <div class="dialog-button" ref="buttons">

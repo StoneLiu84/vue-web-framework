@@ -2,7 +2,7 @@
   <Page>
     <div slot="header">
       <PagePath></PagePath>
-      <SearchBar :options="searchOptions"></SearchBar>
+      <SearchBar :options="searchOptions" @search="onSearch"></SearchBar>
       <ButtonBar :buttons="buttons" @buttonClick="onButtonClick"></ButtonBar>
     </div>
     <template slot-scope="scope">
@@ -37,14 +37,17 @@ export default {
   data () {
     return {
       searchOptions: [
-        { field: 'Id', text: '序号', component: 'TextBox', props: {placeholder: '输入关键字搜索'} },
-        { field: 'Name', text: '名称', component: 'ComboBoxEx', props: {data: [{value: '1', text: '123'}]} }
+        { field: 'Id', text: '序号', component: 'TextBox', propsData: {placeholder: '输入关键字搜索'} },
+        { field: 'Name', text: '名称', component: 'ComboBoxEx', propsData: {data: [{value: '1', text: '123'}]} }
       ],
       buttons: ['add', 'delete', 'import', 'export', { text: '编辑', iconCls: 'icon-scan', btnCls: 'btn-success', handler: this.onEdit }],
       pageParams: { id: '' }
     }
   },
   methods: {
+    onSearch (params) {
+      console.log(params)
+    },
     onButtonClick (type) {
       switch (type) {
         case 'add':
