@@ -6,23 +6,50 @@ import 'vx-easyui/dist/themes/vue.css'
 import './theme/css/iconfont.css'
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+import Router from './router'
 import EasyUI from 'vx-easyui'
-import locale from 'vx-easyui/dist/locale/easyui-lang-zh_CN'
+import EasyUIlocale from 'vx-easyui/dist/locale/easyui-lang-zh_CN'
 import CustomComponents from './components/'
-import store from './store'
+import Store from './store'
+import Http from './scripts/http'
+import Utility from './scripts/utility'
 
 Vue.use(EasyUI, {
-  locale
+  locale: EasyUIlocale
 })
 Vue.use(CustomComponents)
 Vue.config.productionTip = false
+Vue.prototype.$http = Http
+Vue.prototype.$utility = Utility
+
+Vue.prototype.$alert = msg => {
+  Vue.prototype.$messager.alert({
+    title: '警告',
+    borderType: 'none',
+    msg
+  })
+}
+
+Vue.prototype.$confirm = msg => {
+  return new Promise((resolve) => {
+    Vue.prototype.$messager.confirm({
+      title: '确认',
+      borderType: 'none',
+      msg,
+      result (r) {
+        if (r) {
+          resolve()
+        }
+      }
+    })
+  })
+}
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  router,
-  store,
+  router: Router,
+  store: Store,
   components: { App },
   template: '<App/>'
 })

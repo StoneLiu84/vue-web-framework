@@ -63,7 +63,15 @@ export default {
       loading: false
     }
   },
+  created () {
+    this.load()
+  },
   methods: {
+    load () {
+      this.$http.post('/api/admin/system/systemmenu/getmenu').then(result => {
+        console.log(result)
+      })
+    },
     onNodeClick (id) {
       this.extendId = id === this.extendId ? '' : id
     },

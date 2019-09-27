@@ -8,10 +8,10 @@ export default {
     params: {
       type: Object
     },
-    dataUrl: {
+    url: {
       type: String
     },
-    postUrl: {
+    post: {
       type: String
     }
   },
@@ -44,18 +44,20 @@ export default {
       }
     },
     load () {
+      if (!this.url) return
       return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          this.model = {
-            name: '12345',
-            email: '123@123.com',
-            hero: ''
+        this.$http.get(this.url, this.params).then(result => {
+          if (result) {
+            this.model = result
           }
-          resolve(this.model)
-        }, 1000)
+          resolve(result)
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     submit () {
+      if (!this.post) return
       return new Promise((resolve, reject) => {
         let isValid = true
         for (let key in this.errors) {
@@ -66,10 +68,14 @@ export default {
         }
         if (!isValid) {
           reject(new Error('请正确填写表单'))
+        } else {
+          this.$http.post(this.post, this.model).then(result => {
+            this.$emit('submitSuccess')
+            resolve(result)
+          }).catch(err => {
+            reject(err)
+          })
         }
-        setTimeout(() => {
-          resolve('')
-        }, 1000)
       })
     }
   },

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '@/store/'
+import store from '../store/'
+import Http from '../scripts/http'
 // import whileList from './whileList'
 import routes from './routes'
 Vue.use(Router)
@@ -16,6 +17,19 @@ router.beforeEach((to, from, next) => {
     next('/404')
   } else {
     store.commit('loading', true)
+    if (!store.getters.token) {
+      Http.get('/api/oauth2/getUserAccessToken', {
+        clientId: 'demo',
+        clientSecret: 'demo',
+        password: '123456',
+        userId: 'admin'
+      }).then(data => {
+        store.commit('setToken', data)
+        next()
+      })
+    } else {
+      next()
+    }
     /* if (String.isNullOrEmpty(store.getters.userInfo.UserID)) {
       store.dispatch('userInfo/checkLogin', {
         callback (result) {
@@ -29,7 +43,7 @@ router.beforeEach((to, from, next) => {
     } else {
       store.dispatch('menu/getData', () => { next() })
     } */
-    next()
+    // next()
   }
 })
 

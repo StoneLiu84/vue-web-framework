@@ -6,14 +6,17 @@
       :iconCls="btn.iconCls"
       :btnCls="btn.btnCls"
       :text="btn.text"
+      :disabled="btn.disabled"
       @click="btn.handler">
     </LinkButtonEx>
   </div>
 </template>
 
 <script>
+import Right from '../mixins/right'
 export default {
   name: 'ButtonBar',
+  mixins: [Right],
   props: {
     buttons: {
       type: Array,
@@ -42,9 +45,13 @@ export default {
       let componentButtons = []
       this.buttons.forEach(item => {
         if (typeof item === 'string') {
-          componentButtons.push(this.defaultButtons[item])
+          componentButtons.push(Object.assign({
+            disabled: !this.getRight(item)
+          }, this.defaultButtons[item]))
         } else {
-          componentButtons.push(item)
+          componentButtons.push(Object.assign({
+            disabled: false
+          }, item))
         }
       })
       this.componentButtons = componentButtons

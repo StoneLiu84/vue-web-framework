@@ -1,2 +1,17 @@
-import Home from './modules/home'
-export default [].concat(Home)
+// import Home from './modules/home'
+
+let routes = [
+  {
+    path: '/',
+    component: resolve => require(['@/pages/home/desktop'], resolve),
+    children: [
+      { path: '', component: resolve => require(['@/pages/home/index'], resolve) },
+      { path: 'system/info', component: resolve => require(['@/pages/system-admin/system-info-list'], resolve) },
+      { path: 'error', component: resolve => require(['@/pages/home/error'], resolve) },
+      { path: '404', component: resolve => require(['@/pages/home/404'], resolve) }
+    ]
+  },
+  { path: '/login', component: resolve => require(['@/pages/home/login'], resolve) }
+]
+
+export default routes // [].concat(Home)

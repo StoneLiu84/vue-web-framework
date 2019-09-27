@@ -1,44 +1,50 @@
-import axios from 'axios'
+import Axios from 'axios'
 import JSONP from 'jsonp'
-// import { Message } from 'element-ui'
-// import store from './store/'
-import utility from './utility'
-// import './prototype'
-const qs = require('qs')
-const http = axios.create({
-  // baseURL: process.env.API_BASE_URL,
+import Vue from 'vue'
+import Store from '../store/'
+import Utility from './utility'
+
+const http = Axios.create({
   timeout: 300000
 })
 
-/* http.interceptors.request.use(
+http.interceptors.request.use(
   config => {
-    if (store.getters.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers['Token'] = store.getters.token
+    if (Store.getters.token) {
+      config.headers['Authorization'] = Store.getters.token.token_type + ' ' + Store.getters.token.access_token
     }
     return config
   },
   err => {
     return Promise.reject(err)
   }
-) */
+)
 
 let handleResponse = (response, resolve, reject) => {
-  let data
+  let result = null
   if (response.data) {
-    data = response.data
+    result = response.data
   } else {
-    data = response
+    result = response
   }
-  if (data.IsSuccess !== undefined) {
-    if (data.IsSuccess) {
-      resolve(data.Data)
+  if (result.code !== undefined) {
+    if (!result.code) {
+      resolve(result.data)
     } else {
-      // Message.error(data.ErrorMessage)
-      reject(data.ErrorMessage)
+      alertMesage(result.msg)
+      reject(result)
     }
   } else {
-    resolve(data)
+    resolve(result)
   }
+}
+
+let alertMesage = message => {
+  if (!message) return
+  Vue.prototype.$messager.alert({
+    title: '警告',
+    msg: message
+  })
 }
 
 export default {
@@ -49,7 +55,7 @@ export default {
       }).then((response) => {
         handleResponse(response, resolve, reject)
       }).catch((result) => {
-        // Message.error(result.message)
+        alertMesage(result.message)
         reject(result.message)
       })
     })
@@ -59,18 +65,18 @@ export default {
       http({
         method: 'POST',
         url: url,
-        data: qs.stringify(data),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        data,
+        headers: { 'Content-Type': 'application/json' }
       }).then((response) => {
         handleResponse(response, resolve, reject)
       }).catch((result) => {
-        // Message.error(result.message)
+        alertMesage(result.message)
         reject(result.message)
       })
     })
   },
   jsonp (url, params = {}) {
-    url = utility.getUrl(url, params, true)
+    url = Utility.getUrl(url, params, true)
     return new Promise((resolve, reject) => {
       JSONP(url, {
         param: 'jsonp_callback',

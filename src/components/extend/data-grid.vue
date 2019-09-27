@@ -48,7 +48,7 @@ export default {
       type: String
     },
     params: {
-      type: Object
+      type: Array
     },
     rowCss: {
       type: [Object, Function]
@@ -66,6 +66,7 @@ export default {
     return {
       total: 10000,
       data: [],
+      pageIndex: 1,
       loading: false
     }
   },
@@ -77,32 +78,53 @@ export default {
     }
   },
   methods: {
-    load (pageNumber) {
+    load (pageIndex) {
       return new Promise((resolve, reject) => {
-        let total = this.total
-        let data = []
-        let start = (pageNumber - 1) * this.pageSize
-        for (let i = start + 1; i <= start + this.pageSize; i++) {
-          let amount = Math.floor(Math.random() * 1000)
-          let price = Math.floor(Math.random() * 1000)
-          data.push({
-            inv: 'Inv No ' + i,
-            name: 'Name ' + i,
-            amount: amount,
-            price: price,
-            cost: amount * price,
-            note: 'Note ' + i
+        this.pageIndex = pageIndex
+        this.loading = true
+        this.$http.post(this.url, {
+          filter: {},
+          page: pageIndex,
+          size: this.pageSize
+        }).then(result => {
+          this.total = result.totalSize
+          this.data = result.list
+          this.loading = false
+          this.$emit('loadSuccess', {
+            data: this.data,
+            total: this.total,
+            page: this.pageIndex,
+            size: this.pageSize
           })
-        }
-        setTimeout(() => {
-          resolve({
-            total: total,
-            rows: data
-          })
-        }, 1000)
+          resolve(result)
+        }).catch(err => {
+          this.loading = false
+          reject(err)
+        })
       })
     },
-    remove () {},
+    reload () {
+      this.load(this.pageIndex)
+    },
+    remove ({url, valueField} = {}) {
+      let rows = this.getCheckedRows()
+      if (!rows.length) {
+        this.$alert('请选择要删除的数据')
+        return
+      }
+      this.$confirm('您确定要删除数据吗？').then(() => {
+        let ids = []
+        rows.forEach(row => {
+          ids.push(row[valueField])
+        })
+        this.loading = true
+        this.$http.post(url, ids).then(() => {
+          this.reload()
+        }).catch(() => {
+          this.loading = false
+        })
+      })
+    },
     getCheckedRows () {
       let rows = []
       this.data.forEach(item => {
@@ -113,14 +135,7 @@ export default {
       return rows
     },
     onPageChange (e) {
-      this.loading = true
-      this.load(e.pageNumber).then(result => {
-        this.total = result.total
-        this.data = result.rows
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+      this.load(e.pageNumber).then(result => {}).catch(() => {})
       this.$emit('pageChange', e)
     },
     onSortChange (sorts) {
@@ -130,6 +145,14 @@ export default {
       this.$emit('rowDblClick', row)
     },
     onRowChecked (row) {}
+  },
+  watch: {
+    params: {
+      deep: true,
+      handler () {
+        this.load(1)
+      }
+    }
   }
 }
 </script>

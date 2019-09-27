@@ -16,6 +16,8 @@ import Dialog from './extend/dialog'
 import DataGrid from './extend/data-grid'
 import ComboBox from './extend/combo-box'
 import Form from './extend/form'
+import Label from './extend/label'
+import TextBox from './extend/text-box'
 
 const custom = {
   install (Vue) {
@@ -44,7 +46,9 @@ const custom = {
       Dialog,
       DataGrid,
       ComboBox,
-      Form
+      Form,
+      Label,
+      TextBox
     ].forEach(item => {
       Vue.component(item.name, item)
     })

@@ -9,7 +9,7 @@ Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   state: {
-    token: '',
+    token: null,
     loading: false
   },
   getters: {
@@ -26,7 +26,7 @@ export default new Vuex.Store({
     systemParams
   },
   mutations: {
-    setToken (state, {token}) {
+    setToken (state, token) {
       state.token = token
     },
     loading (state, loading) {

@@ -46,15 +46,6 @@ var utility = {
   isFunction (fn) {
     return fn !== undefined && typeof fn === 'function'
   },
-  getCookie (name) {
-    var reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-    var arr = document.cookie.match(reg)
-    if (arr) {
-      return unescape(arr[2])
-    } else {
-      return null
-    }
-  },
   removeClass ($el, name) {
     if ($el.className.indexOf(name) > -1) {
       let className = $el.className.split(' ')

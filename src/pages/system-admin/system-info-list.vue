@@ -15,17 +15,17 @@
         <template slot="operation" slot-scope="scope">
           <LinkButtonEx iconCls="icon-edit" btnCls="btn-warning" @click="onEdit(scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
         </template>
-        <GridColumn field="systemId" title="系统ID" :sortable="false" :width="300"></GridColumn>
+        <GridColumn field="systemId" title="系统ID" :width="300"></GridColumn>
         <GridColumn field="systemName" title="系统名称"></GridColumn>
       </DataGridEx>
       <!--编辑页面-->
-      <DialogEx ref="dialog" title="系统信息" :height="200" :width="400">
-        <EditPage
+      <DialogEx ref="dialog" title="系统信息">
+        <SystemInfoEdit
           :params="pageParams"
           url="/api/admin/system/system/loadedit"
           post="/api/admin/system/system/savedata"
           @submitSuccess="onSubmitSuccess">
-        </EditPage>
+        </SystemInfoEdit>
       </DialogEx>
     </div>
   </Page>
@@ -33,25 +33,19 @@
 
 <script>
 import ListPageBase from '../../components/mixins/list-page-base'
-import EditPage from './edit'
+import SystemInfoEdit from './system-info-edit'
 export default {
   name: 'HomeIndex',
   mixins: [ListPageBase],
   components: {
-    EditPage
+    SystemInfoEdit
   },
   data () {
     return {
       searchOptions: [
         { field: 'systemName', text: '系统名称', component: 'TextBox', propsData: {placeholder: '输入关键字搜索'} }
       ],
-      buttons: [
-        'add',
-        'delete',
-        'import',
-        'export',
-        { text: '编辑', iconCls: 'icon-scan', btnCls: 'btn-success', handler: this.onEdit }
-      ],
+      buttons: [ 'add', 'delete' ],
       searchParams: [],
       pageParams: { id: '' }
     }

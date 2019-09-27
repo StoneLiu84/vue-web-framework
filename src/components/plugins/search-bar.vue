@@ -13,6 +13,7 @@
         <LinkButtonEx
           iconCls="icon-search"
           btnCls="btn-default"
+          :disabled="!getRight('search')"
           @click="onSearch"
           text="搜索">
         </LinkButtonEx>
@@ -25,8 +26,10 @@
 <script>
 import SearchUtil from '../utils/search-util'
 import SearchDialog from './search-dialog'
+import Right from '../mixins/right'
 export default {
   name: 'SearchBar',
+  mixins: [Right],
   components: {
     SearchDialog
   },
