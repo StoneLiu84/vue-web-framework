@@ -1,12 +1,13 @@
 <template>
   <DataGrid
     :pagination="pagination"
-    :data="data"
+    :data="componentData"
     :total="total"
     :pageSize="pageSize"
     :lazy="lazy"
     :loading="loading"
     :rowCss="rowCss"
+    :style="gridStyle"
     @pageChange="onPageChange"
     @sortChange="onSortChange"
     @rowDblClick="onRowDblClick">
@@ -28,6 +29,10 @@
 export default {
   name: 'DataGridEx',
   props: {
+    data: {
+      type: Array,
+      default: () => []
+    },
     pageSize: {
       type: Number,
       default: 30
@@ -57,6 +62,10 @@ export default {
       type: Boolean,
       default: true
     },
+    height: {
+      type: [Number, String],
+      default: 250
+    },
     operationColumnWidth: {
       type: String,
       default: '60px'
@@ -65,42 +74,55 @@ export default {
   data () {
     return {
       total: 10000,
-      data: [],
+      componentData: [],
       pageIndex: 1,
       loading: false
     }
   },
   created () {
+    this.componentData = this.data
   },
   computed: {
     operationVisible () {
       return this.$slots.operation || this.$scopedSlots.operation
+    },
+    gridStyle () {
+      if (this.height) {
+        if (typeof this.height === 'number') {
+          return {
+            height: this.height + 'px'
+          }
+        } else {
+          return {
+            height: this.height
+          }
+        }
+      } else {
+        return null
+      }
     }
   },
   methods: {
     load (pageIndex) {
-      return new Promise((resolve, reject) => {
-        this.pageIndex = pageIndex
-        this.loading = true
-        this.$http.post(this.url, {
-          filter: {},
-          page: pageIndex,
+      if (!this.url) return
+      this.pageIndex = pageIndex
+      this.loading = true
+      this.$http.post(this.url, {
+        filter: {},
+        page: pageIndex,
+        size: this.pageSize
+      }).then(result => {
+        this.total = result.totalSize
+        this.componentData = result.list
+        this.loading = false
+        this.$emit('loadSuccess', {
+          data: this.componentData,
+          total: this.total,
+          page: this.pageIndex,
           size: this.pageSize
-        }).then(result => {
-          this.total = result.totalSize
-          this.data = result.list
-          this.loading = false
-          this.$emit('loadSuccess', {
-            data: this.data,
-            total: this.total,
-            page: this.pageIndex,
-            size: this.pageSize
-          })
-          resolve(result)
-        }).catch(err => {
-          this.loading = false
-          reject(err)
         })
+      }).catch(() => {
+        this.loading = false
       })
     },
     reload () {
@@ -127,7 +149,7 @@ export default {
     },
     getCheckedRows () {
       let rows = []
-      this.data.forEach(item => {
+      this.componentData.forEach(item => {
         if (item.checked) {
           rows.push(item)
         }
@@ -135,7 +157,7 @@ export default {
       return rows
     },
     onPageChange (e) {
-      this.load(e.pageNumber).then(result => {}).catch(() => {})
+      this.load(e.pageNumber)
       this.$emit('pageChange', e)
     },
     onSortChange (sorts) {
@@ -152,25 +174,13 @@ export default {
       handler () {
         this.load(1)
       }
+    },
+    data (newValue) {
+      this.componentData = newValue
     }
   }
 }
 </script>
 
 <style lang="less">
-.grid-operation-column {
-  .l-btn {
-    .l-btn-text {
-      line-height: 18px;
-      height: 18px;
-      margin: 0px 2px;
-    }
-    .l-btn-icon-left {
-      .l-btn-icon {
-        left: 2px;
-        font-size: 12px;
-      }
-    }
-  }
-}
 </style>

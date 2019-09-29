@@ -11,9 +11,11 @@ import ButtonBar from './plugins/button-bar'
 import Scrollbar from './directives/scrollbar'
 import LoadingDirective from './directives/loading'
 // 扩展组件
-import Linkbutton from './extend/link-button'
+import LinkButton from './extend/link-button'
+import MenuButton from './extend/menu-button'
 import Dialog from './extend/dialog'
 import DataGrid from './extend/data-grid'
+import TreeGrid from './extend/tree-grid'
 import ComboBox from './extend/combo-box'
 import Form from './extend/form'
 import Label from './extend/label'
@@ -42,9 +44,11 @@ const custom = {
       Vue.directive(item.name, item)
     });
     [
-      Linkbutton,
+      LinkButton,
+      MenuButton,
       Dialog,
       DataGrid,
+      TreeGrid,
       ComboBox,
       Form,
       Label,

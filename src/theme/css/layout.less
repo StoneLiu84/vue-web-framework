@@ -45,6 +45,29 @@ body {
   &.l-btn-focus {
     outline: none;
   }
+  .m-btn-downarrow,
+  .s-btn-downarrow {
+    font-family: "iconfont" !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 12px;
+    line-height: 16px;
+    transform: rotate(180deg) scale(0.7);
+    transition: 0.3s;
+    background: none;
+    &::before {
+      content: '\ebab'
+    }
+  }
+}
+.m-btn {
+  &.m-btn-active {
+    .m-btn-downarrow,
+    .s-btn-downarrow {
+      transform: rotate(0deg) scale(0.7);
+    }
+  }
 }
 .l-btn-disabled,
 .l-btn-disabled:hover {
@@ -152,5 +175,29 @@ body {
 .textbox {
   textarea.textbox-text {
     padding: 5px;
+  }
+}
+
+.grid-operation-column {
+  .l-btn {
+    .l-btn-text {
+      line-height: 18px;
+      height: 18px;
+      margin: 0px 2px;
+    }
+    .l-btn-icon-left {
+      .l-btn-icon {
+        left: 2px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.menu-item {
+  border-radius: 3px;
+  .menu-text {
+    height: 28px;
+    line-height: 28px;
   }
 }

@@ -9,11 +9,11 @@
       <!--数据列表-->
       <DataGridEx
         ref="datagrid"
-        :style="{'height': scope.height + 'px'}"
+        :height="scope.height"
         url="/api/admin/system/system/loadlist"
         :params="searchParams">
         <template slot="operation" slot-scope="scope">
-          <LinkButtonEx iconCls="icon-edit" btnCls="btn-warning" @click="onEdit(scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
+          <LinkButtonEx iconCls="icon-edit" btnCls="btn-info" @click="onEdit(scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
         </template>
         <GridColumn field="systemId" title="系统ID" :width="300"></GridColumn>
         <GridColumn field="systemName" title="系统名称"></GridColumn>

@@ -9,6 +9,7 @@
       :disabled="btn.disabled"
       @click="btn.handler">
     </LinkButtonEx>
+    <slot></slot>
   </div>
 </template>
 
@@ -65,6 +66,10 @@ export default {
   border-bottom: 1px solid #e8e8e8;
   box-sizing: border-box;
   padding: 5px 10px;
+  overflow: hidden;
+  .l-btn {
+    float: left;
+  }
   .l-btn + .l-btn {
     margin-left: 8px;
   }

@@ -21,7 +21,7 @@ export default {
     iconCls: {
       type: String
     },
-    iconfont: {
+    iconFont: {
       type: Boolean,
       default: true
     },
@@ -61,7 +61,7 @@ export default {
   computed: {
     iconClass () {
       if (this.iconCls) {
-        return (this.iconfont ? 'iconfont ' : '') + this.iconCls
+        return (this.iconFont ? 'iconfont ' : '') + this.iconCls
       } else {
         return ''
       }
