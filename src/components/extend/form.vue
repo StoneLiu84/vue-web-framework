@@ -45,7 +45,7 @@ form {
     flex-direction: row;
     align-items: center;
     .textbox-label {
-      width: 80px;
+      width: 100px;
       text-align: right;
       box-sizing: border-box;
       padding: 0px 5px;

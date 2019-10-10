@@ -11,7 +11,7 @@
           </Menu>
         </MenuButtonEx>
         <LinkButtonEx iconCls="icon-refresh" btnCls="btn-success" text="刷新" @click="onRefresh"></LinkButtonEx>
-        <LinkButtonEx iconCls="icon-setting" btnCls="btn-warning" text="设置页面权限"></LinkButtonEx>
+        <LinkButtonEx iconCls="icon-setting" btnCls="btn-warning" text="设置页面操作"></LinkButtonEx>
       </ButtonBar>
     </div>
     <div slot-scope="scope" style="margin:5px;">
@@ -31,19 +31,19 @@
         <GridColumn field="description" title="描述"></GridColumn>
       </TreeGridEx>
       <!--编辑页面-->
-      <DialogEx ref="moduleDialog" title="模块信息">
+      <DialogEx ref="moduleDialog" title="模块信息" :height="302">
         <SystemModuleEdit
-          :params="pageParams"
-          url="/api/admin/system/system/loadedit"
-          post="/api/admin/system/system/savedata"
+          :params="moduleParams"
+          url="/api/admin/system/systemmenu/loadmoduleedit"
+          post="/api/admin/system/systemmenu/savemoduledata"
           @submitSuccess="onSubmitSuccess">
         </SystemModuleEdit>
       </DialogEx>
-      <DialogEx ref="pageDialog" title="页面信息">
+      <DialogEx ref="pageDialog" title="页面信息" :height="378">
         <SystemPageEdit
           :params="pageParams"
-          url="/api/admin/system/system/loadedit"
-          post="/api/admin/system/system/savedata"
+          url="/api/admin/system/systemmenu/loadpageedit"
+          post="/api/admin/system/systemmenu/savepagedata"
           @submitSuccess="onSubmitSuccess">
         </SystemPageEdit>
       </DialogEx>
@@ -68,6 +68,7 @@ export default {
         { field: 'systemName', text: '系统名称', component: 'TextBox', propsData: {placeholder: '输入关键字搜索'} }
       ],
       searchParams: [],
+      moduleParams: { id: '' },
       pageParams: { id: '' }
     }
   },
@@ -75,18 +76,20 @@ export default {
     onSearch (params) {
       this.searchParams = params
     },
-    onAdd (value) {
-      this.$refs[value + 'Dialog'].open()
+    onAdd (type) {
+      this[type + 'Params'].id = ''
+      this.$refs[type + 'Dialog'].open()
     },
     onDelete (row) {
-      /* this.$refs.datagrid.remove({
-        url: '/api/admin/system/system/deletedata',
-        valueField: 'systemId'
-      }) */
+      this.$refs.treeGrid.remove({
+        url: `/api/admin/system/systemmenu/delete${row.type === 0 ? 'module' : 'page'}data`,
+        row
+      })
     },
     onEdit (row) {
-      this.pageParams.id = row.systemId
-      this.$refs.moduleDialog.open()
+      let type = row.type === 0 ? 'module' : 'page'
+      this[type + 'Params'].id = row.id
+      this.$refs[type + 'Dialog'].open()
     },
     onSubmitSuccess () {
       this.$refs.treeGrid.reload()
@@ -117,7 +120,7 @@ export default {
     content: '\ebca';
   }
 }
-.tree-file {
+.tree-page {
   .treeIconBase;
   &::before {
     content: '\eba7';

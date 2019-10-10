@@ -1,23 +1,19 @@
 <template>
-  <TextBox v-model="componentValue" :multiline="multiline" :style="componentStyle"></TextBox>
+  <TextBox :name="name" :value="value" :multiline="multiline" :style="componentStyle" @input="onInput"></TextBox>
 </template>
 
 <script>
+import InputBase from '../mixins/input-base'
 export default {
   name: 'TextBoxEx',
+  mixins: [InputBase],
   props: {
-    value: {},
     multiline: {
       type: Boolean,
       default: false
     },
     height: {
       type: Number
-    }
-  },
-  data () {
-    return {
-      componentValue: ''
     }
   },
   computed: {
@@ -29,14 +25,6 @@ export default {
       } else {
         return null
       }
-    }
-  },
-  watch: {
-    value (newValue) {
-      this.componentValue = newValue
-    },
-    componentValue (newValue) {
-      this.$emit('input', newValue)
     }
   }
 }

@@ -5,6 +5,8 @@
     :idField="idField"
     :treeField="treeField"
     :loading="loading"
+    :selectionMode="selectionMode"
+    :checkbox="checkbox"
     @rowExpand="onRowExpand"
     @rowCollapse="onRowCollapse"
     @rowCheck="onRowCheck"
@@ -47,6 +49,14 @@ export default {
     height: {
       type: [Number, String],
       default: 250
+    },
+    selectionMode: {
+      type: String,
+      default: ''
+    },
+    checkbox: {
+      type: Boolean,
+      default: false
     },
     operationColumnWidth: {
       type: String,
@@ -108,7 +118,15 @@ export default {
       this.load()
     },
     remove ({url, row} = {}) {
-
+      this.$confirm('您确定要删除数据吗？').then(() => {
+        let ids = [row[this.idField]]
+        this.loading = true
+        this.$http.post(url, ids).then(() => {
+          this.reload()
+        }).catch(() => {
+          this.loading = false
+        })
+      })
     },
     onRowExpand (row) {
       if (this.lazy && !row.loaded) {

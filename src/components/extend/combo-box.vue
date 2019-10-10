@@ -1,9 +1,11 @@
 <template>
   <comboBox
-    v-model="comboValue"
+    :value="comboValue"
+    :name="name"
     :data="comboData"
     :editable="editable"
     :placeholder="placeholder"
+    @input="onInput"
     @selectionChange="onSelectionChange">
     <template :slot="slotVisible ? 'item' : ''" slot-scope="scope">
       <slot name="item" :row="scope.row"></slot>
@@ -13,12 +15,13 @@
 
 <script>
 import SystemParams from '../mixins/system-params'
+import InputBase from '../mixins/input-base'
 export default {
   name: 'ComboBoxEx',
-  mixins: [SystemParams],
+  mixins: [InputBase, SystemParams],
   props: {
     value: {
-      type: [String, Number, Array]
+      type: [String, Number, Array, Boolean]
     },
     data: {
       type: Array
@@ -40,12 +43,10 @@ export default {
   },
   data () {
     return {
-      comboValue: '',
       comboData: []
     }
   },
   created () {
-    this.comboValue = this.value || ''
     this.comboData = this.data || []
     if (this.systemParams) {
       this.getSystemParams().then(data => {
@@ -54,25 +55,33 @@ export default {
     }
   },
   methods: {
+    load () {},
+    onInput (value) {
+      let newValue = value
+      if (typeof this.value === 'boolean') {
+        newValue = (value === 1)
+      }
+      this.$emit('input', newValue)
+    },
     onSelectionChange (e) {
       this.$emit('selectionChange', e)
-    },
-    loadData () {}
+    }
   },
   computed: {
     slotVisible () {
       return this.$slots.item || this.$scopedSlots.item
+    },
+    comboValue () {
+      if (typeof this.value === 'boolean') {
+        return (this.value ? 1 : 0)
+      } else {
+        return this.value || ''
+      }
     }
   },
   watch: {
-    value (newValue) {
-      this.comboValue = newValue
-    },
     data (newValue) {
       this.comboData = newValue
-    },
-    comboValue (newValue) {
-      this.$emit('input', newValue)
     }
   }
 }

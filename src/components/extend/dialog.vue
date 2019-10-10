@@ -77,7 +77,7 @@ export default {
         close: { text: '关闭', iconCls: 'icon-roundclose', btnCls: 'btn-default', handler: () => { this.onButtonClick('close') } }
       },
       componentInstance: null,
-      defaultLoadData: true,
+      defaultLoad: true,
       loading: false,
       bodyHeight: null
     }
@@ -86,9 +86,10 @@ export default {
     this.initButtons()
     this.$on('pageInstance', componentInstance => {
       this.componentInstance = componentInstance
-      if (this.defaultLoadData) {
+      if (this.defaultLoad) {
         this.load()
       }
+      this.componentInstance.$emit('open', this.defaultLoad)
     })
   },
   mounted () {
@@ -103,7 +104,7 @@ export default {
   },
   methods: {
     open (load = true) {
-      this.defaultLoadData = load
+      this.defaultLoad = load
       this.$refs.dialog.open()
     },
     close () {
@@ -150,7 +151,7 @@ export default {
     submit () {
       if (this.componentInstance && this.componentInstance.submit) {
         this.loading = true
-        this.componentInstance.submit().then(() => {
+        this.componentInstance.submit(this.defaultLoad).then(() => {
           this.loading = false
           this.close()
         }).catch(err => {

@@ -56,7 +56,7 @@ export default {
         })
       })
     },
-    submit () {
+    submit (isEdit = false) {
       if (!this.post) return
       return new Promise((resolve, reject) => {
         let isValid = true
@@ -69,7 +69,9 @@ export default {
         if (!isValid) {
           reject(new Error('请正确填写表单'))
         } else {
-          this.$http.post(this.post, this.model).then(result => {
+          this.$http.post(this.$utility.getUrl(this.post, {
+            isEdit
+          }, false), this.model).then(result => {
             this.$emit('submitSuccess')
             resolve(result)
           }).catch(err => {

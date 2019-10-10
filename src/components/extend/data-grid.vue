@@ -128,17 +128,21 @@ export default {
     reload () {
       this.load(this.pageIndex)
     },
-    remove ({url, valueField} = {}) {
+    remove ({url, valueField, row} = {}) {
       let rows = this.getCheckedRows()
-      if (!rows.length) {
+      if (!rows.length && !row) {
         this.$alert('请选择要删除的数据')
         return
       }
       this.$confirm('您确定要删除数据吗？').then(() => {
         let ids = []
-        rows.forEach(row => {
+        if (row) {
           ids.push(row[valueField])
-        })
+        } else {
+          rows.forEach(row => {
+            ids.push(row[valueField])
+          })
+        }
         this.loading = true
         this.$http.post(url, ids).then(() => {
           this.reload()
