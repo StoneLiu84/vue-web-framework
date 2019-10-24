@@ -20,9 +20,11 @@
             ref="typeGrid"
             :height="scope.height"
             url="/api/admin/system/basicDataDictionaryType/loadlist"
-            :params="searchParams"
+            :params="typeParams"
             :checkbox="false"
-            operationColumnWidth="60px">
+            selectionMode="single"
+            operationColumnWidth="60px"
+            @rowSelect="onRowSelect">
             <template slot="operation" slot-scope="scope">
               <LinkButtonEx iconCls="icon-edit" btnCls="btn-info" @click="onEdit('type', scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
               <LinkButtonEx iconCls="icon-delete" btnCls="btn-danger" @click="onDelete('type', scope.row)" :disabled="!getRight('delete')"></LinkButtonEx>
@@ -36,8 +38,9 @@
             ref="memberGrid"
             :height="scope.height"
             url="/api/admin/system/basicDataDictionary/loadlist"
-            :params="searchParams"
+            :params="memberParams"
             :checkbox="false"
+            :lazy="false"
             operationColumnWidth="60px">
             <template slot="operation" slot-scope="scope">
               <LinkButtonEx iconCls="icon-edit" btnCls="btn-info" @click="onEdit('member', scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
@@ -57,7 +60,7 @@
           @submitSuccess="onTypeSubmitSuccess">
         </DataDictionaryTypeEdit>
       </DialogEx>
-      <DialogEx ref="memberDialog" title="字典成员" :height="235" :width="500">
+      <DialogEx ref="memberDialog" title="字典成员" :height="272">
         <DataDictionaryEdit
           :params="pageParams"
           url="/api/admin/system/basicDataDictionary/loadedit"
@@ -83,10 +86,13 @@ export default {
   data () {
     return {
       searchOptions: [
-        { field: 'systemName', text: '系统名称', component: 'TextBox', propsData: {placeholder: '输入关键字搜索'} }
+        { field: 'systemName', text: '系统名称', component: 'TextBox', propsData: { placeholder: '输入关键字搜索' } },
+        { field: 'ddictType', text: '字典类型', component: 'TextBox', propsData: { placeholder: '输入关键字搜索' } },
+        { field: 'ddictTypeName', text: '类型名称', component: 'TextBox', propsData: { placeholder: '输入关键字搜索' } }
       ],
       buttons: [],
-      searchParams: [],
+      typeParams: [],
+      memberParams: [],
       pageParams: { id: '' }
     }
   },
@@ -126,14 +132,29 @@ export default {
       }
     },
     onEdit (type, row) {
-      this.pageParams.id = row.ddictType
-      this.$refs[type + 'Dialog'].open()
+      if (type === 'type') {
+        this.pageParams = {
+          id: row.ddictType
+        }
+        this.$refs['typeDialog'].open()
+      } else {
+        this.pageParams = {
+          ddictType: row.ddictType,
+          ddictMember: row.ddictMember
+        }
+        this.$refs['memberDialog'].open()
+      }
     },
     onTypeSubmitSuccess () {
       this.$refs.typeGrid.reload()
     },
     onMemberSubmitSuccess () {
       this.$refs.memberGrid.reload()
+    },
+    onRowSelect (row) {
+      this.memberParams = [
+        { field: 'ddictType', value: row.ddictType }
+      ]
     }
   }
 }

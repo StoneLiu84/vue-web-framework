@@ -8,8 +8,12 @@
     :loading="loading"
     :rowCss="rowCss"
     :style="gridStyle"
+    :selectionMode="selectionMode"
+    :border="border"
     @pageChange="onPageChange"
     @sortChange="onSortChange"
+    @rowSelect="onRowSelect"
+    @rowUnselect="onRowUnselect"
     @rowDblClick="onRowDblClick">
     <gridColumn field="checkbox" width="30px" align="center" v-if="checkbox">
       <div slot="body" slot-scope="scope" @click.stop="onRowChecked(scope.row)">
@@ -49,6 +53,9 @@ export default {
       type: Boolean,
       default: true
     },
+    selectionMode: {
+      type: String
+    },
     url: {
       type: String
     },
@@ -66,6 +73,10 @@ export default {
       type: [Number, String],
       default: 250
     },
+    border: {
+      type: Boolean,
+      default: true
+    },
     operationColumnWidth: {
       type: String,
       default: '60px'
@@ -73,7 +84,7 @@ export default {
   },
   data () {
     return {
-      total: 10000,
+      total: 0,
       componentData: [],
       pageIndex: 1,
       loading: false
@@ -103,7 +114,7 @@ export default {
     }
   },
   methods: {
-    load (pageIndex) {
+    load (pageIndex = 1) {
       if (!this.url) return
       this.pageIndex = pageIndex
       this.loading = true
@@ -112,8 +123,13 @@ export default {
         page: pageIndex,
         size: this.pageSize
       }).then(result => {
-        this.total = result.totalSize
-        this.componentData = result.list
+        if (this.lazy) {
+          this.total = result.totalSize
+          this.componentData = result.list
+        } else {
+          this.total = result.length
+          this.componentData = result
+        }
         this.loading = false
         this.$emit('loadSuccess', {
           data: this.componentData,
@@ -166,6 +182,12 @@ export default {
     },
     onSortChange (sorts) {
       this.$emit('sortChange', sorts)
+    },
+    onRowSelect (row) {
+      this.$emit('rowSelect', row)
+    },
+    onRowUnselect (row) {
+      this.$emit('rowUnselect', row)
     },
     onRowDblClick (row) {
       this.$emit('rowDblClick', row)

@@ -18,6 +18,7 @@ import DataGrid from './extend/data-grid'
 import TreeGrid from './extend/tree-grid'
 import ComboBox from './extend/combo-box'
 import ComboTree from './extend/combo-tree'
+import ComboGrid from './extend/combo-grid'
 import Form from './extend/form'
 import Label from './extend/label'
 import TextBox from './extend/text-box'
@@ -52,6 +53,7 @@ const custom = {
       TreeGrid,
       ComboBox,
       ComboTree,
+      ComboGrid,
       Form,
       Label,
       TextBox

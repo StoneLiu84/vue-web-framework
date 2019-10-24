@@ -98,18 +98,32 @@ export default {
       if (!this.url) return
       this.loading = true
       let params = Object.assign({}, this.params)
+      let url = this.url
       if (row) {
-        params.parent = row[this.idField]
+        url = this.$utility.getUrl(this.url, {
+          rootId: row[this.idField]
+        }, false)
       }
-      this.$http.post(this.url, params).then(result => {
+      this.$http.post(url, params).then(result => {
+        let data = result.data
+        if (this.lazy) {
+          data.forEach(item => {
+            if (!item.state) {
+              if (item.ouId !== '8fd24184e05949c3b353b0269cc48aa5') {
+                item.state = 'closed'
+              }
+            }
+          })
+        }
         if (row) {
-          row.children = result
-          row.loaded = true
+          if (!row.children) {
+            this.$set(row, 'children', data)
+          }
         } else {
-          this.componentData = result
+          this.componentData = data
         }
         this.loading = false
-        this.$emit('loadSuccess', this.componentData)
+        this.$emit('loadSuccess', data)
       }).catch(() => {
         this.loading = false
       })
@@ -129,7 +143,7 @@ export default {
       })
     },
     onRowExpand (row) {
-      if (this.lazy && !row.loaded) {
+      if (this.lazy && !row.children) {
         this.load(row)
       }
       this.$emit('rowExpand', row)

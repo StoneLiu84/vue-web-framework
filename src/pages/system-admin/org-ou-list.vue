@@ -3,15 +3,8 @@
     <div slot="header">
       <PagePath></PagePath>
       <SearchBar :options="searchOptions" @search="onSearch"></SearchBar>
-      <ButtonBar :buttons="[]">
-        <MenuButtonEx text="新增" icon-cls="icon-add" btn-cls="btn-primary">
-          <Menu @itemClick="onAdd">
-            <menu-item value="module" text="模块" iconCls="iconfont icon-newgroup"></menu-item>
-            <menu-item value="page" text="页面" iconCls="iconfont icon-doc"></menu-item>
-          </Menu>
-        </MenuButtonEx>
+      <ButtonBar :buttons="buttons" @buttonClick="onButtonClick">
         <LinkButtonEx iconCls="icon-refresh" btnCls="btn-success" text="刷新" @click="onRefresh"></LinkButtonEx>
-        <LinkButtonEx iconCls="icon-setting" btnCls="btn-warning" text="设置页面操作"></LinkButtonEx>
       </ButtonBar>
     </div>
     <div slot-scope="scope" style="margin:5px;">
@@ -19,33 +12,29 @@
       <TreeGridEx
         ref="treeGrid"
         :height="scope.height"
-        url="/api/admin/system/systemmenu/loadlist"
+        url="/api/admin/system/orgOu/loadlist"
+        :lazy="true"
+        idField="ouId"
+        treeField="ouName"
         :params="searchParams">
         <template slot="operation" slot-scope="scope">
           <LinkButtonEx iconCls="icon-edit" btnCls="btn-info" @click="onEdit(scope.row)" :disabled="!getRight('edit')"></LinkButtonEx>
           <LinkButtonEx iconCls="icon-delete" btnCls="btn-danger" @click="onDelete(scope.row)" :disabled="!getRight('delete')"></LinkButtonEx>
         </template>
-        <GridColumn field="name" title="名称" width="300px"></GridColumn>
-        <GridColumn field="isVisible" title="是否可见" width="80px" align="center"></GridColumn>
-        <GridColumn field="systemConfig" title="是否系统配置" width="90px" align="center"></GridColumn>
+        <GridColumn field="ouName" title="部门名称" width="300px"></GridColumn>
+        <GridColumn field="contact" title="联系人" width="120px" align="center"></GridColumn>
+        <GridColumn field="fax" title="传真" width="130px" align="center"></GridColumn>
+        <GridColumn field="orgStatusName" title="状态" width="90px" align="center"></GridColumn>
         <GridColumn field="description" title="描述"></GridColumn>
       </TreeGridEx>
       <!--编辑页面-->
-      <DialogEx ref="moduleDialog" title="模块信息" :height="302">
-        <SystemModuleEdit
-          :params="moduleParams"
-          url="/api/admin/system/systemmenu/loadmoduleedit"
-          post="/api/admin/system/systemmenu/savemoduledata"
-          @submitSuccess="onSubmitSuccess">
-        </SystemModuleEdit>
-      </DialogEx>
-      <DialogEx ref="pageDialog" title="页面信息" :height="378">
-        <SystemPageEdit
+      <DialogEx ref="dialog" title="组织信息" :height="302">
+        <OrgOuEdit
           :params="pageParams"
-          url="/api/admin/system/systemmenu/loadpageedit"
-          post="/api/admin/system/systemmenu/savepagedata"
+          url="/api/admin/system/orgOu/loadedit"
+          post="/api/admin/system/orgOu/savedata"
           @submitSuccess="onSubmitSuccess">
-        </SystemPageEdit>
+        </OrgOuEdit>
       </DialogEx>
     </div>
   </Page>
@@ -53,22 +42,20 @@
 
 <script>
 import ListPageBase from '../../components/mixins/list-page-base'
-import SystemModuleEdit from './system-module-edit'
-import SystemPageEdit from './system-page-edit'
+import OrgOuEdit from './org-ou-edit'
 export default {
-  name: 'SystemMenuList',
+  name: 'OrgOuList',
   mixins: [ListPageBase],
   components: {
-    SystemModuleEdit,
-    SystemPageEdit
+    OrgOuEdit
   },
   data () {
     return {
+      buttons: [ 'add' ],
       searchOptions: [
         { field: 'systemName', text: '系统名称', component: 'TextBox', propsData: {placeholder: '输入关键字搜索'} }
       ],
       searchParams: [],
-      moduleParams: { id: '' },
       pageParams: { id: '' }
     }
   },
@@ -76,20 +63,31 @@ export default {
     onSearch (params) {
       this.searchParams = params
     },
-    onAdd (type) {
-      this[type + 'Params'].id = ''
-      this.$refs[type + 'Dialog'].open()
+    onButtonClick (type) {
+      switch (type) {
+        case 'add':
+          this.onAdd()
+          break
+        case 'delete':
+          this.onDelete()
+          break
+        default:
+          break
+      }
+    },
+    onAdd () {
+      this.pageParams.id = ''
+      this.$refs.dialog.open(false)
     },
     onDelete (row) {
       this.$refs.treeGrid.remove({
-        url: `/api/admin/system/systemmenu/delete${row.type === 0 ? 'module' : 'page'}data`,
+        url: '/api/admin/system/orgOu/deletedata',
         row
       })
     },
     onEdit (row) {
-      let type = row.type === 0 ? 'module' : 'page'
-      this[type + 'Params'].id = row.id
-      this.$refs[type + 'Dialog'].open()
+      this.pageParams.id = row.ouId
+      this.$refs.dialog.open()
     },
     onSubmitSuccess () {
       this.$refs.treeGrid.reload()
