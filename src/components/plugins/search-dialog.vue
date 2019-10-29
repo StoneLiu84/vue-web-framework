@@ -6,10 +6,10 @@
           <div :class="{'active': item.leftBracket}" @click="onLeftBracketClick(item, index)"><span v-if="item.leftBracket">(</span></div>
         </div>
         <div class="col field">
-          <ComboBoxEx :data="fieldData" v-model="item.field" @selectionChange="onFieldChange(item, index, $event)"></ComboBoxEx>
+          <ComboBoxEx :data="fieldData" v-model="item.field" @selectionChange="onFieldChange(item, index, $event)" :clearable="false"></ComboBoxEx>
         </div>
         <div class="col findtype">
-          <ComboBoxEx :data="findTypeOptions" v-model="item.findType"></ComboBoxEx>
+          <ComboBoxEx :data="findTypeOptions" v-model="item.findType" :clearable="false"></ComboBoxEx>
         </div>
         <div class="col value" :ref="'component' + index">
           <!--<TextBox placeholder="请输入关键字"></TextBox>-->
@@ -18,7 +18,7 @@
           <div :class="{'active': item.rightBracket}" @click="onRightBracketClick(item, index)"><span v-if="item.rightBracket">)</span></div>
         </div>
         <div class="col join">
-          <ComboBoxEx :data="joinTypeOptions" v-model="item.joinType" v-if="(index + 1) !== searchItems.length"></ComboBoxEx>
+          <ComboBoxEx :data="joinTypeOptions" v-model="item.joinType" v-if="(index + 1) !== searchItems.length" :clearable="false"></ComboBoxEx>
         </div>
         <div class="col delete">
           <span @click="onRemoveClick(index)" v-if="index !== 0"><i class="iconfont icon-delete"></i></span>

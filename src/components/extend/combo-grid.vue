@@ -8,6 +8,9 @@
     :multiple="multiple"
     :textFormatter="textFormatter"
     :panelStyle="panelStyle">
+    <Addon>
+      <span v-if="multiple ? (value && value.length) : value" class="textbox-icon iconfont icon-close" @click="onClearClick"></span>
+    </Addon>
     <div slot="grid" class="f-full f-column combo-grid-panel-ex">
       <div class="search">
         <SearchBox
@@ -17,7 +20,10 @@
           @search="onSearch">
         </SearchBox>
       </div>
-      <div class="grid f-full f-row" :style="{'height': multiple ? '201px' : '261px'}">
+      <div class="grid f-full f-row" :style="{'height': multiple ? '261px' : '361px'}">
+        <div class="check-all-cell" @click.stop="onCheckAllClick">
+          <CheckBox v-model="checkedAll"></CheckBox>
+        </div>
         <DataGrid
           ref="grid"
           class="combo-data-grid"
@@ -29,17 +35,20 @@
           :pagination="pagination"
           :rowCss="rowCss"
           @pageChange="onPageChange"
-          @rowSelect="onRowSelect"
-          @rowUnselect="onRowUnselect"
           @rowClick="onRowClick">
+          <GridColumn field="checkbox" width="30px" align="center">
+            <div slot="body" slot-scope="scope" @click.stop="onRowClick(scope.row)">
+              <CheckBox v-model="scope.row.checked"></CheckBox>
+            </div>
+          </GridColumn>
           <slot></slot>
         </DataGrid>
       </div>
       <ul class="selections" v-scrollbar v-if="multiple">
-        <li class="item" v-for="item in selectionRows" :key="item[valueField]">
+        <li class="item" v-for="item in selectionRows" :key="item[valueField]" :title="item[textField]">
           {{item[textField]}}
           <span class="remove" @click.stop="onRowClick(item)">
-            <i class="iconfont icon-delete"></i>
+            <i class="iconfont icon-close"></i>
           </span>
         </li>
       </ul>
@@ -100,7 +109,8 @@ export default {
       keyword: '',
       selectionRows: [],
       selectionRowsMap: {},
-      componentData: []
+      componentData: [],
+      checkedAll: false
     }
   },
   created () {
@@ -111,8 +121,8 @@ export default {
     panelStyle () {
       return {
         'min-width': '700px',
-        'height': '300px',
-        'max-height': '300px',
+        'height': '400px',
+        'max-height': '400px',
         'border-color': '#999999'
       }
     }
@@ -127,14 +137,31 @@ export default {
         page: pageIndex,
         size: this.pageSize
       }).then(result => {
+        let data = []
         if (this.lazy) {
           this.total = result.totalSize
-          this.componentData = result.list
+          data = result.list
         } else {
           this.total = result.length
-          this.componentData = result
+          data = result
         }
+        data.forEach(row => {
+          let value = row[this.valueField]
+          if (this.selectionRowsMap[value]) {
+            row.checked = true
+            this.selectionRowsMap[value] = row
+          } else {
+            row.checked = false
+          }
+        })
+        this.componentData = data
+        this.initCheckedAllValue()
         this.loading = false
+        let selectionRows = []
+        for (let key in this.selectionRowsMap) {
+          selectionRows.push(this.selectionRowsMap[key])
+        }
+        this.selectionRows = selectionRows
         this.$emit('loadSuccess', {
           data: this.componentData,
           total: this.total,
@@ -174,32 +201,58 @@ export default {
         this.$emit('input', value.length ? value[0] : '')
       }
     },
-    onRowSelect (row) {},
-    onRowUnselect (row) {},
     onRowClick (row) {
       if (!row) return
-      let id = row[this.valueField]
+      let value = row[this.valueField]
       if (this.multiple) {
-        if (this.selectionRowsMap[id]) {
-          delete this.selectionRowsMap[id]
+        if (this.selectionRowsMap[value]) {
+          row.checked = false
+          delete this.selectionRowsMap[value]
         } else {
-          this.selectionRowsMap[id] = row
+          row.checked = true
+          this.selectionRowsMap[value] = row
         }
       } else {
         this.selectionRowsMap = {
-          [id]: row
+          [value]: row
         }
       }
+      this.initCheckedAllValue()
       this.emitInput()
     },
+    onCheckAllClick () {
+      this.componentData.forEach(row => {
+        let value = row[this.valueField]
+        if (this.selectionRowsMap[value]) {
+          if (!this.checkedAll) {
+            row.checked = false
+            delete this.selectionRowsMap[value]
+          }
+        } else {
+          if (this.checkedAll) {
+            row.checked = true
+            this.selectionRowsMap[value] = row
+          }
+        }
+        this.emitInput()
+      })
+    },
+    initCheckedAllValue () {
+      let checkedCount = 0
+      this.componentData.forEach(row => {
+        if (this.selectionRowsMap[row[this.valueField]]) {
+          checkedCount++
+        }
+      })
+      this.checkedAll = (checkedCount === this.componentData.length)
+    },
     rowCss (row) {
-      let id = row[this.valueField]
-      return this.selectionRowsMap[id] ? 'datagrid-row-selected-ex' : null
-    }
-  },
-  watch: {
-    value (newValue) {
-      // console.log(newValue)
+      /* let id = row[this.valueField]
+      return this.selectionRowsMap[id] ? 'datagrid-row-selected-ex' : null */
+    },
+    onClearClick () {
+      this.selectionRowsMap = {}
+      this.emitInput()
     }
   }
 }
@@ -243,10 +296,22 @@ export default {
     }
   }
   .grid {
-    height: 201px;
+    height: 261px;
+    position: relative;
+    .check-all-cell {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      z-index: 2;
+      width: 29px;
+      text-align: center;
+      height: 32px;
+      vertical-align: middle;
+      padding: 6px 0px;
+    }
   }
   .selections {
-    height: 60px;
+    height: 100px;
     position: relative;
     border-top: 1px solid #dddddd;
     margin: 0px;
@@ -281,10 +346,6 @@ export default {
         cursor: pointer;
         transition: 0.5s;
         border-radius: 0px 3px 3px 0px;
-        &:hover {
-          background-color: @warning;
-          color: #ffffff;
-        }
         i {
           font-size: 12px;
         }

@@ -15,16 +15,16 @@
     @rowSelect="onRowSelect"
     @rowUnselect="onRowUnselect"
     @rowDblClick="onRowDblClick">
-    <gridColumn field="checkbox" width="30px" align="center" v-if="checkbox">
+    <GridColumn field="checkbox" width="30px" align="center" v-if="checkbox">
       <div slot="body" slot-scope="scope" @click.stop="onRowChecked(scope.row)">
         <CheckBox v-model="scope.row.checked"></CheckBox>
       </div>
-    </gridColumn>
-    <gridColumn ref="operation" field="operation" title="操作" :width="operationColumnWidth" align="center" v-if="operationVisible">
+    </GridColumn>
+    <GridColumn ref="operation" field="operation" title="操作" :width="operationColumnWidth" align="center" v-if="operationVisible">
       <div slot="body" class="grid-operation-column" slot-scope="scope">
         <slot name="operation" :row="scope.row"></slot>
       </div>
-    </gridColumn>
+    </GridColumn>
     <slot></slot>
   </DataGrid>
 </template>
@@ -92,6 +92,7 @@ export default {
   },
   created () {
     this.componentData = this.data
+    this.load()
   },
   computed: {
     operationVisible () {
@@ -198,7 +199,7 @@ export default {
     params: {
       deep: true,
       handler () {
-        this.load(1)
+        this.load()
       }
     },
     data (newValue) {

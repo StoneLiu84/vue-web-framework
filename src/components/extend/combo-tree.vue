@@ -3,6 +3,8 @@
     v-model="componentValue"
     :name="name"
     :data="componentData"
+    :valueField="valueField"
+    :textField="textField"
     :multiple="multiple"
     :textFormatter="textFormatter">
     <tree
@@ -28,6 +30,14 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    valueField: {
+      type: String,
+      default: 'id'
+    },
+    textField: {
+      type: String,
+      default: 'text'
     },
     url: {
       type: String

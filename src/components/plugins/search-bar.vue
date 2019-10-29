@@ -5,6 +5,7 @@
         <ComboBoxEx
           :value="selectedOption.field"
           :data="fieldData"
+          :clearable="false"
           @selectionChange="onSelectionChange">
         </ComboBoxEx>
       </div>

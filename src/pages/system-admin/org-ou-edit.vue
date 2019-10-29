@@ -3,7 +3,7 @@
     <FormEx ref="form" :model="model" :rules="rules">
       <div class="row">
         <LabelEx>部门名称(中)：</LabelEx>
-        <TextBoxEx name="ouName" v-model="model.systemName" v-Tooltip="getErrorTip('ouName')"></TextBoxEx>
+        <TextBoxEx name="ouName" v-model="model.ouName" v-Tooltip="getErrorTip('ouName')"></TextBoxEx>
         <LabelEx>部门名称(英)：</LabelEx>
         <TextBoxEx name="ouNameFl" v-model="model.ouNameFl"></TextBoxEx>
       </div>
@@ -31,7 +31,7 @@
       </div>
       <div class="row">
         <LabelEx>描述：</LabelEx>
-        <ComboGridEx name="test" v-model="model.test" valueField="ddictType" textField="ddictTypeName" :multiple="false" url="/api/admin/system/basicDataDictionaryType/loadlist">
+        <ComboGridEx name="test" v-model="model.test" valueField="ddictType" textField="ddictTypeName" :multiple="true" url="/api/admin/system/basicDataDictionaryType/loadlist">
           <GridColumn field="ddictType" title="类型"></GridColumn>
           <GridColumn field="ddictTypeName" title="类型名称"></GridColumn>
         </ComboGridEx>

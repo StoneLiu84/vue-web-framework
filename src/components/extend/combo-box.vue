@@ -5,8 +5,12 @@
     :data="comboData"
     :editable="editable"
     :placeholder="placeholder"
+    :multiple="multiple"
     @input="onInput"
     @selectionChange="onSelectionChange">
+    <Addon>
+      <span v-if="clearVisible && value" class="textbox-icon iconfont icon-close" @click="onClearClick"></span>
+    </Addon>
     <template :slot="slotVisible ? 'item' : ''" slot-scope="scope">
       <slot name="item" :row="scope.row"></slot>
     </template>
@@ -39,6 +43,14 @@ export default {
     placeholder: {
       type: String,
       default: '请选择'
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    clearable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -58,18 +70,32 @@ export default {
     load () {},
     onInput (value) {
       let newValue = value
-      if (typeof this.value === 'boolean') {
+      if (!this.multiple && typeof this.value === 'boolean') {
         newValue = (value === 1)
       }
       this.$emit('input', newValue)
     },
     onSelectionChange (e) {
       this.$emit('selectionChange', e)
+    },
+    onClearClick () {
+      this.onInput(null)
     }
   },
   computed: {
     slotVisible () {
       return this.$slots.item || this.$scopedSlots.item
+    },
+    clearVisible () {
+      if (this.clearable) {
+        if (this.multiple) {
+          return this.value && this.value.length
+        } else {
+          return this.value !== null && this.value !== undefined && this.value !== ''
+        }
+      } else {
+        return false
+      }
     },
     comboValue () {
       if (typeof this.value === 'boolean') {
